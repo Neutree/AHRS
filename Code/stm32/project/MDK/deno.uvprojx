@@ -373,7 +373,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\lib\HAL_OffChip\inc;..\..\lib\HAL_OnChip\inc;..\..\lib\Math\inc;..\..\system</IncludePath>
+              <IncludePath>..\..\lib\HAL_OffChip\inc;..\..\lib\HAL_OnChip\inc;..\..\lib\Math\inc;..\..\system;..\..\App</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -415,9 +415,43 @@
       <Groups>
         <Group>
           <GroupName>OnChip</GroupName>
+          <Files>
+            <File>
+              <FileName>USART.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\lib\HAL_OnChip\src\USART.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>TaskManager.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\lib\HAL_OnChip\src\TaskManager.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>GPIO.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\lib\HAL_OnChip\src\GPIO.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>I2C.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\lib\HAL_OnChip\src\I2C.cpp</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>OffChip</GroupName>
+          <Files>
+            <File>
+              <FileName>LED.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\lib\HAL_OffChip\src\LED.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>mpu6050.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\lib\HAL_OffChip\src\mpu6050.cpp</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>Math</GroupName>
@@ -429,6 +463,21 @@
               <FileName>main.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\system\main.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>Interrupt.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\system\Interrupt.cpp</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>App</GroupName>
+          <Files>
+            <File>
+              <FileName>App.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\App\App.cpp</FilePath>
             </File>
           </Files>
         </Group>
