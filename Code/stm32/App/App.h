@@ -6,6 +6,7 @@
 #include "LED.h"
 #include "I2C.h"
 #include "mpu6050.h"
+#include "AHRS.h"
 
 class App
 {
