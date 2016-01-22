@@ -41,12 +41,16 @@ void App::Loop()
 	mLedGreen.Toggle();
 	if(MOD_ERROR==mMPU6050.Update())
 		mCom1<<"Update Error!\r\n";
-	mCom1<<mMPU6050.GetAccRaw().x<<"\t"<<mMPU6050.GetAccRaw().y<<"\t"<<mMPU6050.GetAccRaw().z<<"\t";
-	mCom1<<mMPU6050.GetGyrRaw().x<<"\t"<<mMPU6050.GetGyrRaw().y<<"\t"<<mMPU6050.GetGyrRaw().z<<"\t";
+//	mCom1<<mMPU6050.GetAccRaw().x<<"\t"<<mMPU6050.GetAccRaw().y<<"\t"<<mMPU6050.GetAccRaw().z<<"\t";
+//	mCom1<<mMPU6050.GetGyrRaw().x<<"\t"<<mMPU6050.GetGyrRaw().y<<"\t"<<mMPU6050.GetGyrRaw().z<<"\t";
 
-	angle = AHRS::GetAngle(mMPU6050.GetAccRaw(),mMPU6050.GetGyrRaw());
+	Vector3<int> acc=mMPU6050.GetAccRaw();
+	Vector3<int> gyr=mMPU6050.GetGyrRaw();
+//	mCom1<<acc.x<<"\t"<<acc.y<<"\t"<<acc.z<<"\t";
+//	mCom1<<gyr.x<<"\t"<<gyr.y<<"\t"<<gyr.z<<"\r\n";
+	angle = AHRS::GetAngle(acc,gyr);
 	mCom1<<angle.x<<"\t"<<angle.y<<"\t"<<angle.z<<"\r\n";
 	
-	TaskManager::DelayMs(500);
+	TaskManager::DelayMs(2);
 }
 

@@ -455,6 +455,13 @@
         </Group>
         <Group>
           <GroupName>Math</GroupName>
+          <Files>
+            <File>
+              <FileName>AHRS.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\lib\Math\src\AHRS.cpp</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>system</GroupName>

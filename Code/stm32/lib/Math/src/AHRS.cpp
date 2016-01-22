@@ -31,6 +31,9 @@ Vector3<double> AHRS::GetAngle(Vector3<int> acc,Vector3<int> gyr)
 	angle.x=0;
 	angle.y=0;
 	angle.z=0;
+	
+	
+	
 	float ax = acc.x,ay = acc.y,az = acc.z;
 	float gx = gyr.x,gy = gyr.y,gz = gyr.z;
 	float norm;
@@ -96,8 +99,9 @@ Vector3<double> AHRS::GetAngle(Vector3<int> acc,Vector3<int> gyr)
 	q2 = q2 / norm;
 	q3 = q3 / norm;
 
-	angle.z += gyr.z*Gyro_G*0.002f;
-
+	//angle.z += gyr.z*Gyro_G*0.002f;
+	angle.z =atan2(2 * q1 * q2 + 2 * q0 * q3, -2 * q2*q2 - 2 * q3* q3 + 1)* 57.3;
+	
 	angle.y = asin(-2 * q1 * q3 + 2 * q0* q2)* 57.3 - AngleOffset_Pit; // pitch
 	angle.x = atan2(2 * q2 * q3 + 2 * q0 * q1, -2 * q1 * q1 - 2 * q2* q2 + 1)* 57.3 - AngleOffset_Rol; // roll
 
