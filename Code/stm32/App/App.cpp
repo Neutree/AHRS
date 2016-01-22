@@ -49,6 +49,7 @@ void App::Loop()
 //	mCom1<<acc.x<<"\t"<<acc.y<<"\t"<<acc.z<<"\t";
 //	mCom1<<gyr.x<<"\t"<<gyr.y<<"\t"<<gyr.z<<"\r\n";
 	angle = AHRS::GetAngle(acc,gyr);
+
 	mCom1<<angle.x<<"\t"<<angle.y<<"\t"<<angle.z<<"\r\n";
 	
 	TaskManager::DelayMs(2);
