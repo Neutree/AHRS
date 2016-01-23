@@ -7,7 +7,7 @@ class AHRS
 public:
 	AHRS();
 	~AHRS();
-	static Vector3<double> GetAngle(Vector3<int> acc,Vector3<int> gyr);
+	Vector3<double> GetAngle(Vector3<int> acc,Vector3<int> gyr,Vector3<int>mag);
 };
 
 
