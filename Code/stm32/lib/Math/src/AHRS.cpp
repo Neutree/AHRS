@@ -21,6 +21,18 @@ AHRS::~AHRS()
  * @param raw gyro value
  * @return angle value
  */
+Vector3<double> AHRS::GetAngle(Vector3<int> acc,Vector3<int> gyr)
+{
+	Vector3<double> angle;
+	return angle;
+}
+
+/**
+ * @brief get angle according to accelerator and gyro
+ * @param raw accelerator value
+ * @param raw gyro value
+ * @return angle value
+ */
 Vector3<double> AHRS::GetAngle(Vector3<int> acc,Vector3<int> gyr,Vector3<int>mag)
 {
 	static float q0 = 1, q1 = 0, q2 = 0, q3 = 0;    // quaternion elements representing the estimated orientation
