@@ -20,8 +20,12 @@ void App::HardwareInit()
 {
 	mLedGreen.Off();
 	mLedRed.Off();
-	mLedGreen.Blink3(mLedRed,8,100);
-	mMPU6050.Init();
+	mLedGreen.Blink3(mLedRed,5,100);
+	if(!mMPU6050.Init())
+		mCom1<<"mpu init error\n";
+	if(!mMag.Init())
+		mCom1<<"mag init error\n";
+
 }
 
 /**

@@ -56,11 +56,13 @@ mpu6050::mpu6050(I2C &i2c,u16 maxUpdateFrequency)
 {
 	mI2C=&i2c;
 	mMaxUpdateFrequency=maxUpdateFrequency;
+	//	this->Init(true);  //上电后等待一段时间后才能初始化
 }
 #else
 mpu6050::mpu6050(I2C &i2c)
 {
 	mI2C=&i2c;
+//	this->Init(true);//上电后等待一段时间后才能初始化
 }
 #endif
 

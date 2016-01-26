@@ -8,13 +8,13 @@ HMC5883L::HMC5883L(I2C &i2c,u16 maxUpdateFrequency)
 {
 	mI2C=&i2c;
 	mMaxUpdateFrequency=maxUpdateFrequency;
-	this->Init();
+//	this->Init();
 }
 #else
 HMC5883L::HMC5883L(I2C &i2c)
 {
 	mI2C=&i2c;
-	this->Init();
+//	this->Init();
 }
 #endif
 bool HMC5883L::Init(bool wait)
