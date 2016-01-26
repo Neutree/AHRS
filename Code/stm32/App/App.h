@@ -7,6 +7,7 @@
 #include "I2C.h"
 #include "mpu6050.h"
 #include "AHRS.h"
+#include "HMC5883L.h"
 
 class App
 {
@@ -20,6 +21,8 @@ private:
 	
 	I2C mI2C2;
 	mpu6050 mMPU6050;
+	HMC5883L mMag;
+	
 public:
 	App();
 	void Loop();

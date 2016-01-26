@@ -451,6 +451,11 @@
               <FileType>8</FileType>
               <FilePath>..\..\lib\HAL_OffChip\src\mpu6050.cpp</FilePath>
             </File>
+            <File>
+              <FileName>HMC5883L.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\lib\HAL_OffChip\src\HMC5883L.cpp</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
