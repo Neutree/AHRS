@@ -183,7 +183,7 @@ bool USART::SendData(u8 txData[], u16 size)
 	DMA_Cmd(mDMATxCh,ENABLE); 	                   //enable DMA to send data
 #else	
 	USART_ClearITPendingBit(mUSARTx, USART_IT_TC); //Clear TC, otherwise the first byte may not able to send out
-	USART_ClearITPendingBit(mUSARTx, USART_IT_TXE); //Clear TC, otherwise the first byte may not able to send out
+//	USART_ClearITPendingBit(mUSARTx, USART_IT_TXE); //it is wrong TXE can not be cleared by write 0 to this register
 	USART_ITConfig(mUSARTx, USART_IT_TC, ENABLE);  //Enable TC, going to send data
 	//USART_ITConfig(mUSARTx, USART_IT_TXE, ENABLE);  //Enable TC, going to send data
 	USART_GetFlagStatus(mUSARTx, USART_FLAG_TC);   //read SR to clear flag, otherwise the first byte may not able to send out

@@ -6,15 +6,15 @@
 #include "I2C.h"
 //#include "Timer.h"
 //#include "ADC.h"
-#include "InputCapture_TIM.h"
-#include "InputCapture_EXIT.h"
+//#include "InputCapture_TIM.h"
+//#include "InputCapture_EXIT.h"
 
 #include "MPU6050.h"
 //#include "Gimbal.h"
 //#include "AHRS.h"
-#include "Ultrasonic.h"
-#include "Remoter_PWM_TIM.h"
-#include "Remoter_PWM_EXIT.h"
+//#include "Ultrasonic.h"
+//#include "Remoter_PWM_TIM.h"
+//#include "Remoter_PWM_EXIT.h"
 #include "HMC5883.h"
 #include "MS561101.h"
 #include "Mathtool.h"
@@ -62,7 +62,6 @@ Vector3f acc, gyro, mag;
 double newTime = 0, oldTime = 0;
 
 float pitch,roll,yaw;
-
 int main()
 {	
 	while(1)
@@ -71,9 +70,9 @@ int main()
 		
 		ahrs.Update();
 		
-		if(newTime-oldTime>0.1)
+		if((newTime-oldTime)>0.1)
 		{				
-			com<<ahrs.GetAcc().x<<","<<ahrs.GetGyro().x*57.29f<<","<<ahrs.GetMag().x<<","<<ahrs.GetPressure()<<"\n";
+			//com<<ahrs.GetAcc().x<<","<<ahrs.GetGyro().x*57.29f<<","<<ahrs.GetMag().x<<","<<ahrs.GetPressure()<<"\n";
 			oldTime = newTime;
 		}
 	}
