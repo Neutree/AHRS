@@ -71,8 +71,9 @@ protected:
 	u16 _gyro_calibrate_cnt;       //count of sum gyro data
 public:
 	MPU6050(I2C &i2c);
-  virtual bool Initialize(void);
+	virtual bool Initialize(void);
 	virtual bool Update(Vector3f &acc, Vector3f &gyro);
+	virtual Vector3f GetAngleByGyro(Vector3f gyro,float delta_t);
 	
 	void StartCalibrateGyro();
 	void StopCalibrateGyro();

@@ -9,10 +9,40 @@ class AHRS_DCM:public AHRS
 {
 private:
 	Matrix3<float> _dcm_matrix;
-	
+    Vector3f _omega;                 // Corrected Gyro_Vector data
+    Vector3f _omega_P;               // accel Omega proportional correction
+    Vector3f _omega_I;               // Omega Integrator correction
+    Vector3f _omega_yaw_P;           // proportional yaw correction
+
+    // state to support status reporting
+	float _renorm_val_sum;
+	uint16_t _renorm_val_count;
+
+
 public:
 	AHRS_DCM(InertialSensor &ins,Compass *compass=0, Barometer *baro=0);
 	virtual bool Update(); 
+	void MatrixUpdate(float delta_t);
+	// Normalize the DCM matrix
+	void Normalize();
+
+	/**
+	 * renormalise one vector component of the DCM matrix
+	 * this will return false if renormalization fails
+	 */
+	bool renorm(Vector3f const &a, Vector3f &result);
+
+	// Perform drift correction
+	void DriftCorrection(float delta_t);
+
+	// paranoid check for bad values in the DCM matrix
+	void CheckMatrix();
+
+	// Calculate pitch, roll, yaw for stabilization and navigation
+	void EulerAngles();
+
+	// update trig values including _cos_roll, cos_pitch
+	void UpdateTrig();
 };
 
 #endif

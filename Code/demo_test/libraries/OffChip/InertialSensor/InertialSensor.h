@@ -13,6 +13,8 @@ class InertialSensor : public Sensor
 	public:
 		virtual bool Initialize(void) = 0;
 		virtual bool Update(Vector3f &acc, Vector3f &gyro)=0;
+
+		virtual Vector3f GetAngleByGyro(Vector3f gyro,float delta_t)=0;
 };
 
 

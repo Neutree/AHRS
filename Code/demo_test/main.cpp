@@ -73,6 +73,7 @@ int main()
 		if((newTime-oldTime)>0.1)
 		{				
 			//com<<ahrs.GetAcc().x<<","<<ahrs.GetGyro().x*57.29f<<","<<ahrs.GetMag().x<<","<<ahrs.GetPressure()<<"\n";
+			com<<ahrs.getAngle().x<<","<<ahrs.getAngle().y<<","<<ahrs.getAngle().z<<"\n";
 			oldTime = newTime;
 		}
 	}

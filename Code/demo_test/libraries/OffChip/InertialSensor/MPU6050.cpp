@@ -79,10 +79,14 @@ void MPU6050::StartCalibrateGyro()
 	_gyro_calibrate_cnt = 0;
 	_gyro_calibrate_sum.Zero();
 }
+
+Vector3f MPU6050::GetAngleByGyro(Vector3f gyro, float delta_t) {
+	return gyro*delta_t;
+}
+
 //stop calibrate gyro
 void MPU6050::StopCalibrateGyro()
 {
 	_is_calibrate_gyro = false;
 }
-
 
