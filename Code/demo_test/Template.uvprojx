@@ -126,7 +126,7 @@
             <Oh166RecLen>16</Oh166RecLen>
           </OPTHX>
           <Simulator>
-            <UseSimulator>0</UseSimulator>
+            <UseSimulator>1</UseSimulator>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
             <RunToMain>1</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
@@ -138,9 +138,9 @@
             <RestoreSysVw>1</RestoreSysVw>
           </Simulator>
           <Target>
-            <UseTarget>1</UseTarget>
+            <UseTarget>0</UseTarget>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
-            <RunToMain>1</RunToMain>
+            <RunToMain>0</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
             <RestoreWatchpoints>1</RestoreWatchpoints>
             <RestoreMemoryDisplay>1</RestoreMemoryDisplay>
@@ -150,7 +150,7 @@
             <RestoreSysVw>1</RestoreSysVw>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>11</TargetSelection>
+          <TargetSelection>8</TargetSelection>
           <SimDlls>
             <CpuDll></CpuDll>
             <CpuDllArguments></CpuDllArguments>
@@ -373,7 +373,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\libraries\OffChip\AHRS;.\libraries\OffChip\Gimbal;.\libraries\OffChip\InertialSensor;.\libraries\OffChip\Motor;.\libraries\OnChip\ADC;.\libraries\OnChip\IIC;.\libraries\OnChip\InputCapture;.\libraries\OnChip\PWM;.\libraries\OnChip\SerialPort;.\libraries\OnChip\Timer;.\libraries\ToolBox\Buffer;.\libraries\ToolBox\Math;.\libraries\OffChip\Ultrasonic;.\libraries\OffChip\Remoter;.\libraries\System\Interrupt;.\libraries\System;.\libraries\System\TaskManager;.\libraries\OffChip\Compass;.\libraries\OffChip\Barometer;.\libraries\OffChip</IncludePath>
+              <IncludePath>.\libraries\OffChip\AHRS;.\libraries\OffChip\Gimbal;.\libraries\OffChip\InertialSensor;.\libraries\OffChip\Motor;.\libraries\OnChip\ADC;.\libraries\OnChip\IIC;.\libraries\OnChip\InputCapture;.\libraries\OnChip\PWM;.\libraries\OnChip\SerialPort;.\libraries\OnChip\Timer;.\libraries\ToolBox\Buffer;.\libraries\ToolBox\Math;.\libraries\OffChip\Ultrasonic;.\libraries\OffChip\Remoter;.\libraries\System\Interrupt;.\libraries\System;.\libraries\System\TaskManager;.\libraries\OffChip\Compass;.\libraries\OffChip\Barometer;.\libraries\OffChip;.\libraries\OffChip\GPS</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -500,6 +500,11 @@
               <FileName>AHRS_DCM.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>.\libraries\OffChip\AHRS\AHRS_DCM.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>GPS.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\libraries\OffChip\GPS\GPS.cpp</FilePath>
             </File>
           </Files>
         </Group>

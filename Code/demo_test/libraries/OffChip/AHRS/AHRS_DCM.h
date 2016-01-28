@@ -18,13 +18,22 @@ private:
 	float _renorm_val_sum;
 	uint16_t _renorm_val_count;
 
+	//加速度校准
+	float _ra_deltat;  //时间累积值
+	uint32_t _ra_sum_start;
+	Vector3f _last_velocity;
+
+
+	// whether we have GPS lock
+	bool _have_gps_lock;
 
 public:
 	AHRS_DCM(InertialSensor &ins,Compass *compass=0, Barometer *baro=0);
 	virtual bool Update(); 
 	void MatrixUpdate(float delta_t);
 	// Normalize the DCM matrix
-	void Normalize();
+	void
+	Normalize();
 
 	/**
 	 * renormalise one vector component of the DCM matrix
@@ -33,16 +42,24 @@ public:
 	bool renorm(Vector3f const &a, Vector3f &result);
 
 	// Perform drift correction
-	void DriftCorrection(float delta_t);
+	void
+	DriftCorrection(float delta_t);
+
+	void drift_correction_yaw();
+
+
 
 	// paranoid check for bad values in the DCM matrix
-	void CheckMatrix();
+	void
+	CheckMatrix();
 
 	// Calculate pitch, roll, yaw for stabilization and navigation
-	void EulerAngles();
+	void
+	EulerAngles();
 
 	// update trig values including _cos_roll, cos_pitch
-	void UpdateTrig();
+	void
+	UpdateTrig();
 };
 
 #endif

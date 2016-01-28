@@ -5,6 +5,7 @@
 #include "InertialSensor.h"
 #include "Compass.h"
 #include "Barometer.h"
+#include "GPS.h"
 
 class AHRS
 {
@@ -12,6 +13,7 @@ protected:
 	InertialSensor &_ins;      //inertial sensor
 	Compass *_compass;         //compass
 	Barometer *_baro;          //barometer
+	GPS *_gps;                 //GPS
 
 	Vector3f _acc;             //3-aixs acceleration data
 	Vector3f _gyro;            //3-aixs gyroscope data
@@ -20,6 +22,10 @@ protected:
 
 	Vector3f _angle;      		 //roll, pitch, yaw
 	Quaternion _q;             //quternion: q1,q2,q3,q4
+
+
+	uint8_t _gps_min_satellite;//最少允许的卫星数量
+
 public:
 	AHRS(InertialSensor &ins,Compass *compass=0, Barometer *baro=0):_ins(ins),_compass(compass),_baro(baro),_pressure(0){};
 	virtual bool Update()=0;             //update inertial sensor data
