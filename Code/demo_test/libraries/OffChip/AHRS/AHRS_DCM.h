@@ -5,6 +5,9 @@
 #include "AHRS.h"
 #include "Mathtool.h"
 
+
+#define GRAVITY 9.80065f
+
 class AHRS_DCM:public AHRS
 {
 private:
@@ -23,6 +26,8 @@ private:
 	uint32_t _ra_sum_start;
 	Vector3f _last_velocity;
 
+    // state of accel drift correction（加速度计漂移修正的状态）
+	Vector3f _ra_sum;
 
 	// whether we have GPS lock
 	bool _have_gps_lock;
@@ -60,6 +65,9 @@ public:
 	// update trig values including _cos_roll, cos_pitch
 	void
 	UpdateTrig();
+	
+	Vector3f
+	ra_delayed(const Vector3f &ra);
 };
 
 #endif

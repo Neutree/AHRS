@@ -182,7 +182,57 @@ void AHRS_DCM::DriftCorrection(float delta_t) {
 	if(_gps){
 
 	}
+	
+	
+	// equation 9: get the corrected acceleration vector in earth frame. Units(得到一个地球参考系下的修正的加速度矢量)
+    // are m/s/s
+	 Vector3f GA_e;
+     GA_e = Vector3f(0, 0, -1.0f); //初始状态
+	 if (_ra_deltat <= 0) {
+        // waiting for more data
+        return;
+      }
+    bool using_gps_corrections = false;
+    float ra_scale = 1.0f/(_ra_deltat*GRAVITY);  //1/（重力*时间间隔）
+	  
+//	if (_flags.correct_centrifugal && (_have_gps_lock || _flags.fly_forward)) {
+	  //	   //如果需要矫正离线力 且 gps上锁 或假设航向是沿X轴的
+//	}  
+	  
+
+		
+	// calculate the error term in earth frame.
+    // we do this for each available accelerometer then pick the
+    // accelerometer that leads to the smallest error term. This takes
+    // advantage of the different sample rates on different
+    // accelerometers to dramatically reduce the impact of aliasing
+    // due to harmonics of vibrations that match closely the sampling
+    // rate of our accelerometers. On the Pixhawk we have the LSM303D
+    // running at 800Hz and the MPU6000 running at 1kHz, by combining
+    // the two the effects of aliasing are greatly reduced.
+	Vector3f GA_b;
+	Vector3f error;
+	float error_dirn ;
+	
+	_ra_sum ra_scale;
+	  
+	  //传感器健康状况判断
+	  
+	  //如果不使用PGS修正
+      GA_b= _ra_sum;
+		
+	 //  GA_b.normalize(); //利用加速度计获取机身坐标系的和加速度，然后转换到地球坐标系
+	 
+	   error = GA_b % GA_e;
+	   error_dirn = GA_b * GA_e;   //向量叉乘，作为两种方式获取的加速度误差
+	   //float error_length = error.length(); //得到误差大小
+	   //  error = _dcm_matrix.mul_transpose(error); //把误差向量转化到机身坐标系
+	   // _omega_P = error * _P_gain(spin_rate) * _kp;  //计算比例控制器数值
 }
+
+
+
+
 
 void AHRS_DCM::drift_correction_yaw() {
 	//如果有磁力计，并且有航向值更新
@@ -204,4 +254,10 @@ void AHRS_DCM::EulerAngles() {
 
 
 void AHRS_DCM::UpdateTrig() {
+}
+
+//存入传入数据，读出上一次存入的数据
+Vector3f AHRS_DCM::ra_delayed(const Vector3f &ra)
+{
+	   //取出旧的数据，然后用填充新的数据
 }
