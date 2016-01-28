@@ -146,6 +146,7 @@ void AHRS_DCM::DriftCorrection(float delta_t) {
 
 	//旋转加速度值到地面坐标系下
 	Vector3f accelErthRef = _dcm_matrix *_acc;//地球坐标系下的加速度
+	_ra_sum +=  accelErthRef*delta_t;
 
 	_ra_deltat+=delta_t;//累积时间，记录总的整合时间
 
@@ -160,6 +161,10 @@ void AHRS_DCM::DriftCorrection(float delta_t) {
 			}
 	        //float airSpeed;//空速
 	        //使用空速减去风速来估计在地面坐标系下的地速
+
+			last_correction_time = TaskManager::Time();//获取当前的时间
+			_have_gps_lock = false;
+
 	}
 	else{//有GPS
 		if(_gps->LastFixTimeMs()==_ra_sum_start){
@@ -181,11 +186,20 @@ void AHRS_DCM::DriftCorrection(float delta_t) {
 	}
 	if(_gps){
 
+	}else{
+
 	}
 	
+	//看是不是第一次进来 - 也就是需要设置开始的时间并且返回
+	if(_ra_sum_start==0){
+		_ra_sum_start = last_correction_time;
+		_last_velocity = velocity;
+		return;
+	}
 	
-	// equation 9: get the corrected acceleration vector in earth frame. Units(得到一个地球参考系下的修正的加速度矢量)
-    // are m/s/s
+	// equation 9: get the corrected acceleration vector in earth frame.
+	//Units(得到一个地球参考系下的修正的加速度矢量)
+    // 单位 m/s/s
 	 Vector3f GA_e;
      GA_e = Vector3f(0, 0, -1.0f); //初始状态
 	 if (_ra_deltat <= 0) {
@@ -195,9 +209,10 @@ void AHRS_DCM::DriftCorrection(float delta_t) {
     bool using_gps_corrections = false;
     float ra_scale = 1.0f/(_ra_deltat*GRAVITY);  //1/（重力*时间间隔）
 	  
-//	if (_flags.correct_centrifugal && (_have_gps_lock || _flags.fly_forward)) {
-	  //	   //如果需要矫正离线力 且 gps上锁 或假设航向是沿X轴的
-//	}  
+	if (_flags.correct_centrifugal && (_have_gps_lock || _flags.fly_forward)) {
+	  	   //如果需要矫正离线力 且 gps上锁 或假设航向是沿X轴的
+        using_gps_corrections = true;
+	}
 	  
 
 		
@@ -214,20 +229,25 @@ void AHRS_DCM::DriftCorrection(float delta_t) {
 	Vector3f error;
 	float error_dirn ;
 	
-	_ra_sum ra_scale;
+	_ra_sum *= ra_scale;
 	  
 	  //传感器健康状况判断
 	  
-	  //如果不使用PGS修正
+	  //如果不使用GPS修正
       GA_b= _ra_sum;
 		
 	 //  GA_b.normalize(); //利用加速度计获取机身坐标系的和加速度，然后转换到地球坐标系
 	 
-	   error = GA_b % GA_e;
-	   error_dirn = GA_b * GA_e;   //向量叉乘，作为两种方式获取的加速度误差
-	   //float error_length = error.length(); //得到误差大小
+	   error = GA_b % GA_e;           //向量叉乘，作为两种方式获取的加速度误差
+	   error_dirn = GA_b * GA_e;
+	   float error_length = error.Length(); //得到误差大小
+
+
+	   // base the P gain on the spin rate
+	   float spin_rate = _omega.Length();
+
 	   //  error = _dcm_matrix.mul_transpose(error); //把误差向量转化到机身坐标系
-	   // _omega_P = error * _P_gain(spin_rate) * _kp;  //计算比例控制器数值
+	 //   _omega_P = error * _P_gain(spin_rate) * _kp;  //计算比例控制器数值
 }
 
 

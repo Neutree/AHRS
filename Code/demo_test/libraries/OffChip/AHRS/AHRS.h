@@ -37,6 +37,17 @@ public:
 	const Vector3f& getAngle() const {
 		return _angle;
 	}
+
+
+
+public:
+    // flags structure
+    struct ahrs_flags {
+        uint8_t have_initial_yaw        : 1;    // whether the yaw value has been intialised with a reference
+        uint8_t fly_forward             : 1;    // 1 if we can assume the aircraft will be flying forward on its X axis
+        uint8_t correct_centrifugal     : 1;    // 1 if we should correct for centrifugal forces (allows arducopter to turn this off when motors are disarmed)
+        uint8_t wind_estimation         : 1;    // 1 if we should do wind estimation
+    } _flags;
 };
 
 #endif
