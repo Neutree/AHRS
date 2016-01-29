@@ -17,6 +17,7 @@
 //#include "Remoter_PWM_EXIT.h"
 #include "HMC5883.h"
 #include "MS561101.h"
+#include "GPS.h"
 #include "Mathtool.h"
 #include "AHRS_DCM.h"
 
@@ -48,8 +49,10 @@ I2C i2c(I2C2);               //I2C2 for MPU6050
 MPU6050 ins(i2c);        //MPU6050
 HMC5883 compass(i2c);
 MS561101 baro(i2c);
+GPS gps;
 
-AHRS_DCM ahrs(ins,&compass,&baro);
+
+AHRS_DCM ahrs(ins,&compass,&baro,&gps);
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -59,7 +62,7 @@ AHRS_DCM ahrs(ins,&compass,&baro);
 
 Matrix3<float> m;
 Vector3f acc, gyro, mag;
-double newTime = 0, oldTime = 0;
+double newTime = 0, oldTime = 0, oldTime2=0;
 
 float pitch,roll,yaw;
 int main()
@@ -68,12 +71,14 @@ int main()
 	{
 		newTime = tskmgr.Time();
 		
-		ahrs.Update();
-		
+		if(newTime-oldTime2>=0.02){
+			ahrs.Update();
+			oldTime2=newTime;
+		}
 		if((newTime-oldTime)>0.1)
 		{				
-			//com<<ahrs.GetAcc().x<<","<<ahrs.GetGyro().x*57.29f<<","<<ahrs.GetMag().x<<","<<ahrs.GetPressure()<<"\n";
-			com<<ahrs.getAngle().x<<","<<ahrs.getAngle().y<<","<<ahrs.getAngle().z<<"\n";
+			com<<ahrs.GetAcc().x<<","<<ahrs.GetGyro().x*57.29f<<","<<ahrs.GetMag().x<<","<<ahrs.GetPressure()<<"\n";
+			com<<ahrs.getAngle().x<<","<<ahrs.getAngle().y<<","<<ahrs.getAngle().z<<"\n\n\n";
 			oldTime = newTime;
 		}
 	}

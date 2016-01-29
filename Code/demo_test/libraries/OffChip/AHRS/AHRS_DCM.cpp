@@ -1,7 +1,9 @@
 
 #include "AHRS_DCM.h"
-
-AHRS_DCM::AHRS_DCM(InertialSensor &ins,Compass *compass, Barometer *baro):AHRS(ins,compass,baro)
+#include "GPIO.h"
+#include "LED.h"
+AHRS_DCM::AHRS_DCM(InertialSensor &ins,Compass *compass, Barometer *baro,GPS *gps)
+:AHRS(ins,compass,baro,gps)
 {
 	_dcm_matrix.Identity();
 	_gps_min_satellite=6;//允许的最少卫星数量为6
@@ -9,14 +11,16 @@ AHRS_DCM::AHRS_DCM(InertialSensor &ins,Compass *compass, Barometer *baro):AHRS(i
 /**
  *更新飞机的姿态
  */
+	GPIO ledGpio(GPIOB,6,GPIO_Mode_Out_PP,GPIO_Speed_50MHz);
+	LED led(ledGpio);
 bool AHRS_DCM::Update()
 {
-	
 	//update raw data from sensor
 	if(_compass) _compass->Update(_mag);
 	if(_baro) _baro->Update(_pressure);
-	if(!_ins.Update(_acc,_gyro))
-		return false;
+	if(!_ins.Update(_acc,_gyro)){
+		//return false;
+	}
 
 	//获取两次更新传感器数据之间的间隔
 	float delta_t=_ins.Interval();
@@ -221,18 +225,8 @@ void AHRS_DCM::DriftCorrection(float delta_t) {
 	}
 	  
 
-		
-	// calculate the error term in earth frame.
-    // we do this for each available accelerometer then pick the
-    // accelerometer that leads to the smallest error term. This takes
-    // advantage of the different sample rates on different
-    // accelerometers to dramatically reduce the impact of aliasing
-    // due to harmonics of vibrations that match closely the sampling
-    // rate of our accelerometers. On the Pixhawk we have the LSM303D
-    // running at 800Hz and the MPU6000 running at 1kHz, by combining
-    // the two the effects of aliasing are greatly reduced.
 	Vector3f GA_b;
-	Vector3f error;
+	Vector3f error; //保存方程3左右两边的叉乘 （误差值）
 	float error_dirn ;
 	
 	_ra_sum *= ra_scale;//	方程5左边
@@ -258,11 +252,12 @@ void AHRS_DCM::DriftCorrection(float delta_t) {
 		_omega_I +=_omega_I_sum;
 		_omega_I_sum.Zero();
 	}
-	_ra_deltat = 0;
+
+	_ra_deltat = 0; //清空累积时间
 	_ra_sum_start = last_correction_time;
 
 	// remember the velocity for next time
-	_last_velocity = velocity;
+	_last_velocity = velocity; //保存上速度
 }
 
 

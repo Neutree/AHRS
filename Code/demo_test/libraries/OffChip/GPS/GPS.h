@@ -2,6 +2,8 @@
 #define _GPS_H
 #include "stm32f10x.h"
 #include "Vector3.h"
+#include "TaskManager.h"
+
 class GPS
 {
 

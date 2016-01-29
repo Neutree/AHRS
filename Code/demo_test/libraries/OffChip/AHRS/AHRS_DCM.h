@@ -39,7 +39,7 @@ private:
 	bool _have_gps_lock;
 
 public:
-	AHRS_DCM(InertialSensor &ins,Compass *compass=0, Barometer *baro=0);
+	AHRS_DCM(InertialSensor &ins,Compass *compass=0, Barometer *baro=0,GPS *gps=0);
 	virtual bool Update(); 
 	void MatrixUpdate(float delta_t);
 	// Normalize the DCM matrix
