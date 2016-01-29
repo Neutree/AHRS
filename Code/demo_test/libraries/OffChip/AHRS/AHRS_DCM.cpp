@@ -16,11 +16,11 @@ AHRS_DCM::AHRS_DCM(InertialSensor &ins,Compass *compass, Barometer *baro,GPS *gp
 bool AHRS_DCM::Update()
 {
 	//update raw data from sensor
-	if(_compass) _compass->Update(_mag);
-	if(_baro) _baro->Update(_pressure);
-	if(!_ins.Update(_acc,_gyro)){
-		//return false;
-	}
+//	if(_compass) _compass->Update(_mag);
+//	if(_baro) _baro->Update(_pressure);
+//	if(!_ins.Update(_acc,_gyro)){
+//		//return false;
+//	}
 
 	//获取两次更新传感器数据之间的间隔
 	float delta_t=0.002;//_ins.Interval();
@@ -316,4 +316,13 @@ void AHRS_DCM::Reset(bool recoverEulers) {
 Vector3f AHRS_DCM::ra_delayed(const Vector3f &ra)
 {
 	   //取出旧的数据，然后用填充新的数据
+}
+
+void AHRS_DCM::UpdateSensor() {
+	if(_compass) _compass->Update(_mag);
+	if(_baro) _baro->Update(_pressure);
+	if(!_ins.Update(_acc,_gyro)){
+		//return false;
+	}
+
 }

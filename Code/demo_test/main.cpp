@@ -72,15 +72,17 @@ int main()
 		newTime = tskmgr.Time();
 		
 		if(newTime-oldTime2>=0.02){
-			ahrs.Update();
+//			ahrs.Update();
+			com<<ahrs.GetAcc().x<<","<<ahrs.GetGyro().x*57.29f<<","<<ahrs.GetMag().x<<","<<ahrs.GetPressure()<<"\n";
 			oldTime2=newTime;
 		}
 		if((newTime-oldTime)>0.1)
 		{				
-			com<<ahrs.GetAcc().x<<","<<ahrs.GetGyro().x*57.29f<<","<<ahrs.GetMag().x<<","<<ahrs.GetPressure()<<"\n";
-			com<<ahrs.getAngle().x<<","<<ahrs.getAngle().y<<","<<ahrs.getAngle().z<<"\n\n\n";
-			oldTime = newTime;
+//			com<<ahrs.GetAcc().x<<","<<ahrs.GetGyro().x*57.29f<<","<<ahrs.GetMag().x<<","<<ahrs.GetPressure()<<"\n";
+//			com<<ahrs.getAngle().x<<","<<ahrs.getAngle().y<<","<<ahrs.getAngle().z<<"\n\n\n";
+//			oldTime = newTime;
 		}
+		ahrs.UpdateSensor();
 	}
 }
 

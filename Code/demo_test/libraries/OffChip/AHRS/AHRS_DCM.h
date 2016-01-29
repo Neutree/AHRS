@@ -76,6 +76,9 @@ public:
 
 	Vector3f
 	ra_delayed(const Vector3f &ra);
+
+
+	void UpdateSensor();
 };
 
 #endif
