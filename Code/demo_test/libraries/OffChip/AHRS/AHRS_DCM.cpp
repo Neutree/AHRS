@@ -63,10 +63,11 @@ void AHRS_DCM::MatrixUpdate(float delta_t) {
 	_omega.Zero();
 
 	//由角速度计算出角度变化量
-	_omega=_ins.GetAngleByGyro(_gyro,delta_t);
+//	_omega=_ins.GetAngleByGyro(_gyro,delta_t);
+	_omega = _gyro;
 
 	if(delta_t>0){
-		_omega+=_omega_I/delta_t;//PI controller correct gyro's data by integral
+		_omega+=_omega_I;//PI controller correct gyro's data by integral
 		_dcm_matrix.Rotate((_omega+_omega_P+_omega_yaw_P)*delta_t);//update DCM Matrix with PI controller
 	}
 
@@ -201,7 +202,7 @@ void AHRS_DCM::DriftCorrection(float delta_t) {
 	//Units(得到一个地球参考系下的修正的加速度矢量)
     // 单位 m/s/s
 	 Vector3f GA_e;
-     GA_e = Vector3f(0, 0, -1.0f); //初始状态
+     GA_e = Vector3f(0, 0, -1.0f); //重力加速度方向
 	 if (_ra_deltat <= 0) {
         // waiting for more data
         return;
@@ -211,6 +212,11 @@ void AHRS_DCM::DriftCorrection(float delta_t) {
 	  
 	if (_flags.correct_centrifugal && (_have_gps_lock || _flags.fly_forward)) {
 	  	   //如果需要矫正离线力 且 gps上锁 或假设航向是沿X轴的
+		GA_e += (velocity - _last_velocity) * ra_scale;
+		GA_e.Normalize();
+		if(GA_e.IsInf()){
+			return;
+		}
         using_gps_corrections = true;
 	}
 	  
@@ -229,25 +235,34 @@ void AHRS_DCM::DriftCorrection(float delta_t) {
 	Vector3f error;
 	float error_dirn ;
 	
-	_ra_sum *= ra_scale;
+	_ra_sum *= ra_scale;//	方程5左边
 	  
-	  //传感器健康状况判断
-	  
-	  //如果不使用GPS修正
-      GA_b= _ra_sum;
-		
-	 //  GA_b.normalize(); //利用加速度计获取机身坐标系的和加速度，然后转换到地球坐标系
-	 
-	   error = GA_b % GA_e;           //向量叉乘，作为两种方式获取的加速度误差
-	   error_dirn = GA_b * GA_e;
-	   float error_length = error.Length(); //得到误差大小
+	//传感器健康状况判断
 
+	//如果不使用GPS修正
+	GA_b= _ra_sum;
+	GA_b.Normalize();
 
-	   // base the P gain on the spin rate
-	   float spin_rate = _omega.Length();
+	error=GA_b % GA_e;	//方程三在左右两边的误差
 
-	   //  error = _dcm_matrix.mul_transpose(error); //把误差向量转化到机身坐标系
-	 //   _omega_P = error * _P_gain(spin_rate) * _kp;  //计算比例控制器数值
+	error=_dcm_matrix.Transpose()*error; //将地球坐标系下的误差传化为机体坐标系
+
+	_omega_P=error * _Kp; //比例误差
+
+	_omega_I_sum+=error * _Ki * _ra_deltat;
+	_omega_I_sum_time += _ra_deltat;
+
+	if(_omega_I_sum_time >=5) //如果时间大于5秒
+	{
+		_omega_I_sum_time = 0;
+		_omega_I +=_omega_I_sum;
+		_omega_I_sum.Zero();
+	}
+	_ra_deltat = 0;
+	_ra_sum_start = last_correction_time;
+
+	// remember the velocity for next time
+	_last_velocity = velocity;
 }
 
 

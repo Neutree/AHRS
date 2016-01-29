@@ -13,9 +13,15 @@ class AHRS_DCM:public AHRS
 private:
 	Matrix3<float> _dcm_matrix;
     Vector3f _omega;                 // Corrected Gyro_Vector data
-    Vector3f _omega_P;               // accel Omega proportional correction
+    Vector3f _omega_P;               // accel Omega proportional correction 用来校准由陀螺仪数据得出的值的P值
     Vector3f _omega_I;               // Omega Integrator correction
     Vector3f _omega_yaw_P;           // proportional yaw correction
+    Vector3f _omega_I_sum;			//暂存_omega_I
+    float _omega_I_sum_time;        //_omega_I的更新间隔
+
+
+    float _Kp; //角速度误差修正PI控制器的P参数
+    float _Ki;  //角速度误差修正PI控制器的I参数
 
     // state to support status reporting
 	float _renorm_val_sum;
