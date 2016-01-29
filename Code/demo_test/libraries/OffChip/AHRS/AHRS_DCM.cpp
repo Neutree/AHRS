@@ -8,11 +8,11 @@ AHRS_DCM::AHRS_DCM(InertialSensor &ins,Compass *compass, Barometer *baro,GPS *gp
 	_dcm_matrix.Identity();
 	_gps_min_satellite=6;//允许的最少卫星数量为6
 }
+//	GPIO ledGpio(GPIOB,6,GPIO_Mode_Out_PP,GPIO_Speed_50MHz);
+//	LED ledGreen(ledGpio);
 /**
  *更新飞机的姿态
  */
-	GPIO ledGpio(GPIOB,6,GPIO_Mode_Out_PP,GPIO_Speed_50MHz);
-	LED led(ledGpio);
 bool AHRS_DCM::Update()
 {
 	//update raw data from sensor
@@ -23,7 +23,7 @@ bool AHRS_DCM::Update()
 	}
 
 	//获取两次更新传感器数据之间的间隔
-	float delta_t=_ins.Interval();
+	float delta_t=0.002;//_ins.Interval();
 
 	//两次更新的时间超过了限制的时间，直接返回
 	if(delta_t>1){
@@ -276,14 +276,40 @@ void AHRS_DCM::drift_correction_yaw() {
 
 
 void AHRS_DCM::CheckMatrix() {
+	if(_dcm_matrix.IsNan()){
+		Reset(true);
+		return;
+	}
+	if(!(_dcm_matrix.c.x<1.0f &&
+			_dcm_matrix.c.x>-1.0f)){
+		Normalize();
+		if(_dcm_matrix.IsNan()||
+				fabsf(_dcm_matrix.c.x)>10){
+				Reset(true);
+		}
+	}
 }
 
+
 void AHRS_DCM::EulerAngles() {
+	Matrix3<float> body_dcm_matrix;
+    body_dcm_matrix = _dcm_matrix;
+    body_dcm_matrix.ToEuler(&_angle.x, &_angle.y, &_angle.z);
+
+
 }
 
 
 
 void AHRS_DCM::UpdateTrig() {
+}
+
+void AHRS_DCM::Reset(bool recoverEulers) {
+	_omega_I.Zero();
+	_omega_P.Zero();
+	_omega_yaw_P.Zero();
+	_omega.Zero();
+	_angle.Zero();
 }
 
 //存入传入数据，读出上一次存入的数据

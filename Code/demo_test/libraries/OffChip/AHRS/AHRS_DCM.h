@@ -72,6 +72,8 @@ public:
 	void
 	UpdateTrig();
 	
+	void Reset(bool recoverEulers);
+
 	Vector3f
 	ra_delayed(const Vector3f &ra);
 };
