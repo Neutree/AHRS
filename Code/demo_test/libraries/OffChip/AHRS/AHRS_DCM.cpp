@@ -7,6 +7,8 @@ AHRS_DCM::AHRS_DCM(InertialSensor &ins,Compass *compass, Barometer *baro,GPS *gp
 {
 	_dcm_matrix.Identity();
 	_gps_min_satellite=6;//允许的最少卫星数量为6
+	_Kp = 0.1f;
+	_Ki = 0.01f;
 }
 //	GPIO ledGpio(GPIOB,6,GPIO_Mode_Out_PP,GPIO_Speed_50MHz);
 //	LED ledGreen(ledGpio);
@@ -23,7 +25,7 @@ bool AHRS_DCM::Update()
 //	}
 
 	//获取两次更新传感器数据之间的间隔
-	float delta_t=0.002;//_ins.Interval();
+	float delta_t=0.006;//_ins.Interval();
 
 	//两次更新的时间超过了限制的时间，直接返回
 	if(delta_t>1){
@@ -69,10 +71,19 @@ void AHRS_DCM::MatrixUpdate(float delta_t) {
 	//由角速度计算出角度变化量
 //	_omega=_ins.GetAngleByGyro(_gyro,delta_t);
 	_omega = _gyro;
-
+//	(*pCOM1)<<_omega_I.x<<"\t"<<_omega_I.y<<"\t"<<_omega_I.z<<"\n";
+//	(*pCOM1)<<_omega_P.x<<"\t"<<_omega_P.y<<"\t"<<_omega_P.z<<"\n";
+//	_omega=_omega*delta_t;
+//	(*pCOM1)<<_omega.x<<"\t"<<_omega.y<<"\t"<<_omega.z<<"\n";
 	if(delta_t>0){
 		_omega+=_omega_I;//PI controller correct gyro's data by integral
 		_dcm_matrix.Rotate((_omega+_omega_P+_omega_yaw_P)*delta_t);//update DCM Matrix with PI controller
+//if(_omega_P.x==0&&_omega_P.y==0&&_omega_P.z==0)
+//	(*pCOM1)<<"aaaaaaa\n";
+//else
+//	(*pCOM1)<<_omega_P.x*100000<<"\t"<<_omega_P.y*100000<<"\t"<<_omega_P.z*100000<<"\n";
+//		(*pCOM1)<<temp.x*1000<<"\t"<<temp.y*1000<<"\t"<<temp.z*1000<<"\n";
+		//(*pCOM1)<<_dcm_matrix.a.x*100000<<"\t"<<_dcm_matrix.a.y*100000<<"\t"<<_dcm_matrix.a.z*100000<<"\n";
 	}
 
 
@@ -84,6 +95,7 @@ void AHRS_DCM::Normalize() {
 
 	//检测正交性（orthogonal）（三个向量两两垂直），算出正交性误差
 	error = _dcm_matrix.a * _dcm_matrix.b;    //Eqn.18
+
 	//将误差分到两个向量上，使矩阵满足正交性约束
 	t0 = _dcm_matrix.a - (_dcm_matrix.b*(error*0.5f));    //Eqn.19
 	t1 = _dcm_matrix.b - (_dcm_matrix.a*(error*0.5f));    //Eqn.19
@@ -94,6 +106,8 @@ void AHRS_DCM::Normalize() {
          !renorm(t1, _dcm_matrix.b)||
          !renorm(t2, _dcm_matrix.c)  ){
 		//归一化失败，飞机状态有问题，重置状态（清零），标记出问题的时间
+		Reset(true);
+		(*pCOM1)<<"normalize wrong\n";
 	}
 }
 // renormalise one vector component of the DCM matrix
@@ -110,6 +124,11 @@ bool AHRS_DCM::renorm(Vector3f const &from, Vector3f &result)
     //如果不使用泰勒展开式计算平方根，减少运算时间，这里就使用平方根进行计算
 
     //向量的模的倒数
+    if(from.Length()==0)
+    {
+    	_dcm_matrix.Zero();
+    	return true;
+    }
     renorm_val = 1.0f / from.Length();           //Eqn.21
 
     // keep the average for reporting
@@ -129,6 +148,7 @@ bool AHRS_DCM::renorm(Vector3f const &from, Vector3f &result)
         }
     }
 
+    (*pCOM1)<<from.Length()<<"\n\n";
     result = from * renorm_val;//将向量单位化了
     return true;
 }
@@ -169,7 +189,6 @@ void AHRS_DCM::DriftCorrection(float delta_t) {
 
 			last_correction_time = TaskManager::Time();//获取当前的时间
 			_have_gps_lock = false;
-
 	}
 	else{//有GPS
 		if(_gps->LastFixTimeMs()==_ra_sum_start){
@@ -201,7 +220,6 @@ void AHRS_DCM::DriftCorrection(float delta_t) {
 		_last_velocity = velocity;
 		return;
 	}
-	
 	// equation 9: get the corrected acceleration vector in earth frame.
 	//Units(得到一个地球参考系下的修正的加速度矢量)
     // 单位 m/s/s
@@ -213,8 +231,8 @@ void AHRS_DCM::DriftCorrection(float delta_t) {
       }
     bool using_gps_corrections = false;
     float ra_scale = 1.0f/(_ra_deltat*GRAVITY);  //1/（重力*时间间隔）
-	  
-	if (_flags.correct_centrifugal && (_have_gps_lock || _flags.fly_forward)) {
+
+	if (1/*_flags.correct_centrifugal && (_have_gps_lock || _flags.fly_forward)*/) {
 	  	   //如果需要矫正离线力 且 gps上锁 或假设航向是沿X轴的
 		GA_e += (velocity - _last_velocity) * ra_scale;
 		GA_e.Normalize();
@@ -222,6 +240,10 @@ void AHRS_DCM::DriftCorrection(float delta_t) {
 			return;
 		}
         using_gps_corrections = true;
+
+	}
+	else{
+		//(*pCOM1)<<"..."<<"\n";
 	}
 	  
 
@@ -319,8 +341,8 @@ Vector3f AHRS_DCM::ra_delayed(const Vector3f &ra)
 }
 
 void AHRS_DCM::UpdateSensor() {
-	if(_compass) _compass->Update(_mag);
-	if(_baro) _baro->Update(_pressure);
+//	if(_compass) _compass->Update(_mag);
+//	if(_baro) _baro->Update(_pressure);
 	if(!_ins.Update(_acc,_gyro)){
 		//return false;
 	}

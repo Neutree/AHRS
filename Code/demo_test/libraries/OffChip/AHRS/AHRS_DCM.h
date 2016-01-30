@@ -4,7 +4,7 @@
 #include "stm32f10x.h"
 #include "AHRS.h"
 #include "Mathtool.h"
-
+#include "Interrupt.h"
 
 #define GRAVITY 9.80065f
 
