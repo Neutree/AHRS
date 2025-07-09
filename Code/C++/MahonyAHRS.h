@@ -25,6 +25,7 @@ public:
 	{
 		mKp = kP;
 		mKi = kI;
+		memset(gyro_bias, 0, sizeof(gyro_bias));
 	}
 
 	void MahonyAHRSinit(float ax, float ay, float az, float mx, float my, float mz)
@@ -75,6 +76,7 @@ public:
 		q2q2 = q2 * q2;
 		q2q3 = q2 * q3;
 		q3q3 = q3 * q3;
+		bFilterInit = 1;
 	}
 	void MahonyAHRSupdate(float gx, float gy, float gz, float ax, float ay, float az, float mx, float my, float mz, float twoKp, float twoKi, float dt) 
 	{
@@ -86,7 +88,7 @@ public:
 		// WARNING : in case air reboot, this can cause problem. But this is very unlikely happen.
 		if(bFilterInit == 0) {
 			MahonyAHRSinit(ax,ay,az,mx,my,mz);
-			bFilterInit = 1;
+			return;
 		}
 				
 		//! If magnetometer measurement is available, use it.
@@ -211,8 +213,8 @@ public:
 		
 		MahonyAHRSupdate(gyro.x,gyro.y,gyro.z,acc.x,acc.y,acc.z,mag.x,mag.y,mag.z,mKp,mKi,deltaT);		
 		
-		angle.x = asin(-2 * q1 * q3 + 2 * q0* q2)* RtA; // pitch
-		angle.y = atan2(2 * q2 * q3 + 2 * q0 * q1, -2 * q1 * q1 - 2 * q2* q2 + 1)* RtA; // roll
+		angle.y = asin(-2 * q1 * q3 + 2 * q0* q2)* RtA; // pitch
+		angle.x = atan2(2 * q2 * q3 + 2 * q0 * q1, -2 * q1 * q1 - 2 * q2* q2 + 1)* RtA; // roll
 		angle.z = atan2(2*(q0*q3+q1*q2),1-2*(q2*q2+q3*q3))* RtA;//yaw
 		
 		return angle;
